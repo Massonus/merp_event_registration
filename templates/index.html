@@ -20,6 +20,18 @@
                         <form action="{{ url_for('routes.register', event_id=event.id) }}" method="post">
                             <button type="submit" class="btn btn-primary">Register</button>
                         </form>
+                        {% if current_user.is_authenticated and current_user.is_admin %}
+                            <div class="mt-2">
+                                <form action="{{ url_for('routes.edit_event', event_id=event.id) }}" method="get"
+                                      style="display:inline;">
+                                    <button type="submit" class="btn btn-warning">Edit</button>
+                                </form>
+                                <form action="{{ url_for('routes.delete_event', event_id=event.id) }}" method="post"
+                                      style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -6,7 +6,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from app import db
-from app.forms import LoginForm, EventForm, RegisterForm
+from app.forms import LoginForm, EventForm, RegisterForm, EventEditForm
 from app.models import User, Event, Reservation
 
 routes = Blueprint('routes', __name__)
@@ -95,6 +95,40 @@ def register_user():
     return render_template('user_registration.html', form=form)
 
 
+@routes.route('/edit-event/<int:event_id>', methods=['GET', 'POST'])
+@login_required
+def edit_event(event_id):
+    event = Event.query.get_or_404(event_id)
+    form = EventEditForm(obj=event)
+
+    if form.validate_on_submit():
+        event.title = form.title.data
+        event.start_date = form.start_date.data
+        event.end_date = form.end_date.data
+        event.thumbnail = form.thumbnail.data
+        db.session.commit()
+        flash('Event updated successfully.')
+        return redirect(url_for('routes.index'))
+
+    return render_template('edit_event.html', form=form, event=event)
+
+
+@routes.route('/delete-event/<int:event_id>', methods=['POST'])
+@login_required
+def delete_event(event_id):
+    event = Event.query.get_or_404(event_id)
+
+    reservations = Reservation.query.filter_by(event_id=event_id).all()
+    for reservation in reservations:
+        db.session.delete(reservation)
+
+    db.session.delete(event)
+    db.session.commit()
+
+    flash('Event deleted successfully.')
+    return redirect(url_for('routes.index'))
+
+
 @routes.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin_panel():
@@ -113,6 +147,6 @@ def admin_panel():
         db.session.add(new_event)
         db.session.commit()
         flash('Event created successfully.')
-        return redirect(url_for('routes.admin_panel'))
+        return redirect(url_for('routes.index'))
 
     return render_template('admin.html', form=form)
