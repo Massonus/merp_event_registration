@@ -1,7 +1,7 @@
 import random
 import string
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -22,29 +22,45 @@ def index():
     return render_template('index.html', events=events)
 
 
-@routes.route('/register/<int:event_id>', methods=['GET', 'POST'])
+@routes.route('/register/<int:event_id>', methods=['POST'])
+@login_required
 def register(event_id):
     event = Event.query.get_or_404(event_id)
-    if request.method == 'POST':
-        email = request.form['email']
-        reservation_code = generate_reservation_code()
-        reservation = Reservation(event_id=event.id, email=email, reservation_code=reservation_code)
-        db.session.add(reservation)
-        db.session.commit()
-        flash(f'Registration successful! Your reservation code: {reservation_code}')
+
+    reservation_code = generate_reservation_code()
+
+    existing_reservation = Reservation.query.filter_by(event_id=event.id, email=current_user.email).first()
+    if existing_reservation:
+        flash('You have already registered for this event.')
         return redirect(url_for('routes.index'))
-    return render_template('register.html', event=event)
+
+    reservation = Reservation(event_id=event.id, email=current_user.email, reservation_code=reservation_code)
+    db.session.add(reservation)
+    db.session.commit()
+    flash('Registration successful! Your reservation code has been generated.')
+
+    return redirect(url_for('routes.index'))
 
 
-@routes.route('/manage/<reservation_code>', methods=['GET', 'POST'])
-def manage_reservation(reservation_code):
-    reservation = Reservation.query.filter_by(reservation_code=reservation_code).first_or_404()
-    if request.method == 'POST':
-        db.session.delete(reservation)
-        db.session.commit()
-        flash('Your reservation has been canceled.')
-        return redirect(url_for('routes.index'))
-    return render_template('manage.html', reservation=reservation)
+@routes.route('/manage-events')
+@login_required
+def manage_events():
+    reservations = Reservation.query.filter_by(email=current_user.email).all()
+    return render_template('manage_events.html', reservations=reservations)
+
+
+@routes.route('/cancel-reservation/<int:reservation_id>', methods=['POST'])
+@login_required
+def cancel_reservation(reservation_id):
+    reservation = Reservation.query.get_or_404(reservation_id)
+    if reservation.email != current_user.email:
+        flash('You cannot cancel this reservation.')
+        return redirect(url_for('routes.manage_events'))
+
+    db.session.delete(reservation)
+    db.session.commit()
+    flash('Reservation canceled successfully.')
+    return redirect(url_for('routes.manage_events'))
 
 
 @routes.route('/login', methods=['GET', 'POST'])
@@ -71,7 +87,7 @@ def register_user():
     form = RegisterForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
-        new_user = User(email=form.email.data, password=hashed_password, is_admin=form.is_admin.data)
+        new_user = User(email=form.email.data, password=hashed_password, is_admin=False)
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful! Please log in.')

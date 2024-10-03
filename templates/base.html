@@ -18,8 +18,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 {% if current_user.is_authenticated %}
+                    {% if current_user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('routes.admin_panel') }}">Admin Panel</a>
+                        </li>
+                    {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('routes.admin_panel') }}">Admin Panel</a>
+                        <a class="nav-link" href="{{ url_for('routes.manage_events') }}">Manage Events</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('routes.logout') }}">Logout</a>
@@ -32,6 +37,7 @@
                         <a class="nav-link" href="{{ url_for('routes.register_user') }}">Register</a>
                     </li>
                 {% endif %}
+
             </ul>
         </div>
     </div>

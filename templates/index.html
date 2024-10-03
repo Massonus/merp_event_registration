@@ -2,6 +2,13 @@
 {% block title %}Events{% endblock %}
 {% block content %}
     <h1>Available Events</h1>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-success">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
     <div class="row">
         {% for event in events %}
             <div class="col-md-4">
@@ -10,8 +17,9 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ event.title }}</h5>
                         <p class="card-text">From {{ event.start_date }} to {{ event.end_date }}</p>
-                        <a href="{{ url_for('routes.register', event_id=event.id) }}"
-                           class="btn btn-primary">Register</a>
+                        <form action="{{ url_for('routes.register', event_id=event.id) }}" method="post">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </form>
                     </div>
                 </div>
             </div>
