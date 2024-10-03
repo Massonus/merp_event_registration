@@ -1,5 +1,13 @@
+from flask_login import UserMixin
+
 from app import db
-from datetime import datetime
+
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(150), unique=True, nullable=False)
+    password = db.Column(db.String(256), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
 
 class Event(db.Model):
@@ -15,6 +23,5 @@ class Reservation(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     email = db.Column(db.String(120), nullable=False)
     reservation_code = db.Column(db.String(10), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     event = db.relationship('Event', backref=db.backref('reservations', lazy=True))
