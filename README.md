@@ -73,3 +73,20 @@ http://127.0.0.1:5000
 To log in to the admin panel, use the following credentials:
 #### Email: admin@example.com
 #### Password: admin
+
+# OR
+## Docker Setup
+#### You can also run the application using docker-compose.yml. If you prefer, you can follow these steps to set up the application with Docker:
+1. Build and start the containers:
+
+```bash
+docker-compose up --build
+```
+2. Access the application at:
+```bash
+http://localhost
+```
+
+## Additionally, you can view the already running application at the following link:
+
+http://ec2-18-199-236-18.eu-central-1.compute.amazonaws.com
