@@ -108,7 +108,7 @@ def edit_event(event_id):
         event.thumbnail = form.thumbnail.data
         db.session.commit()
         flash('Event updated successfully.')
-        return redirect(url_for('routes.admin_panel'))
+        return redirect(url_for('routes.index'))
 
     return render_template('edit_event.html', form=form, event=event)
 
@@ -147,6 +147,6 @@ def admin_panel():
         db.session.add(new_event)
         db.session.commit()
         flash('Event created successfully.')
-        return redirect(url_for('routes.admin_panel'))
+        return redirect(url_for('routes.index'))
 
     return render_template('admin.html', form=form)
