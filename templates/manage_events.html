@@ -20,7 +20,7 @@
         <tbody>
         {% for reservation in reservations %}
             <tr>
-                <td>{{ reservation.event.title }}</td>
+                <td>{{ reservation.event_title }}</td>
                 <td>{{ reservation.reservation_code }}</td>
                 <td>
                     <form action="{{ url_for('routes.cancel_reservation', reservation_id=reservation.id) }}"

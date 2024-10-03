@@ -24,7 +24,10 @@ def create_app():
     login_manager.login_view = 'routes.login'
 
     from app.routes import routes
+    from app.api_routes import api
+
     app.register_blueprint(routes)
+    app.register_blueprint(api, url_prefix='/api')
 
     with app.app_context():
         from . import models
