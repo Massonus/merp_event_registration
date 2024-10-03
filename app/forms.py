@@ -18,9 +18,16 @@ class EventForm(FlaskForm):
     submit = SubmitField('Create Event')
 
 
+class EventEditForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    start_date = DateField('Start Date', validators=[DataRequired()])
+    end_date = DateField('End Date', validators=[DataRequired()])
+    thumbnail = StringField('Thumbnail URL')
+    submit = SubmitField('Update Event')
+
+
 class RegisterForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
-

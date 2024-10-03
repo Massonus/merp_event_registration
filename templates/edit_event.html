@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Edit Event{% endblock %}
+{% block content %}
+    <h1>Edit Event: {{ event.title }}</h1>
+    <form method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.title.label }} {{ form.title(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.start_date.label }} {{ form.start_date(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.end_date.label }} {{ form.end_date(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.thumbnail.label }} {{ form.thumbnail(class="form-control") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Event</button>
+    </form>
+{% endblock %}
