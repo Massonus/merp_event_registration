@@ -69,7 +69,7 @@ Open your browser and go to the following address:
 http://127.0.0.1:5000
 ```
 
-## 9. Admin User Credentials
+## Admin User Credentials
 To log in to the admin panel, use the following credentials:
 #### Email: admin@example.com
 #### Password: admin
